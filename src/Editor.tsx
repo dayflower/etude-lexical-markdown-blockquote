@@ -3,9 +3,11 @@ import { LexicalComposer } from "@lexical/react/LexicalComposer";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
 import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
+import { ListPlugin } from "@lexical/react/LexicalListPlugin";
+import { MarkdownShortcutPlugin } from "@lexical/react/LexicalMarkdownShortcutPlugin";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { useState } from "react";
-import { initialConfig } from "./editorConfig";
+import { initialConfig, markdownTransformers } from "./editorConfig";
 import MarkdownPreviewPlugin from "./MarkdownPreviewPlugin";
 
 export default function Editor() {
@@ -33,7 +35,9 @@ export default function Editor() {
                 ErrorBoundary={LexicalErrorBoundary}
               />
               <HistoryPlugin />
+              <ListPlugin />
               <AutoFocusPlugin />
+              <MarkdownShortcutPlugin transformers={markdownTransformers} />
               <MarkdownPreviewPlugin onMarkdown={setMarkdownSource} />
             </div>
           </LexicalComposer>
