@@ -17,6 +17,10 @@ import {
 } from "lexical";
 import { useEffect } from "react";
 
+type BlockquoteBehaviorPluginProps = {
+  exitOnEmptyLine?: boolean;
+};
+
 function getSelectedQuoteNode(): QuoteNode | null {
   const selection = $getSelection();
 
@@ -84,7 +88,10 @@ function replaceQuoteWithParagraph(quoteNode: QuoteNode): ElementNode {
   return paragraph;
 }
 
-function handleQuoteEnter(event: KeyboardEvent | null): boolean {
+function handleQuoteEnter(
+  event: KeyboardEvent | null,
+  exitOnEmptyLine: boolean,
+): boolean {
   if (event?.shiftKey) {
     return false;
   }
@@ -100,6 +107,11 @@ function handleQuoteEnter(event: KeyboardEvent | null): boolean {
   }
 
   event?.preventDefault();
+
+  if (exitOnEmptyLine && breakQuoteAtEmptyLine()) {
+    return true;
+  }
+
   selection.insertLineBreak(false);
   return true;
 }
@@ -182,16 +194,18 @@ function breakQuoteAtEmptyLine(): boolean {
   return true;
 }
 
-export default function BlockquoteBehaviorPlugin() {
+export default function BlockquoteBehaviorPlugin({
+  exitOnEmptyLine = false,
+}: BlockquoteBehaviorPluginProps) {
   const [editor] = useLexicalComposerContext();
 
   useEffect(() => {
     return editor.registerCommand(
       KEY_ENTER_COMMAND,
-      (event) => handleQuoteEnter(event),
+      (event) => handleQuoteEnter(event, exitOnEmptyLine),
       COMMAND_PRIORITY_HIGH,
     );
-  }, [editor]);
+  }, [editor, exitOnEmptyLine]);
 
   useEffect(() => {
     return editor.registerCommand(

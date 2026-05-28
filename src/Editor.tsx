@@ -12,6 +12,8 @@ import { initialConfig, markdownTransformers } from "./editorConfig";
 import MarkdownPreviewPlugin from "./MarkdownPreviewPlugin";
 
 export default function Editor() {
+  const [exitBlockquoteOnEmptyLine, setExitBlockquoteOnEmptyLine] =
+    useState(false);
   const [showMarkup, setShowMarkup] = useState(false);
   const [markdownSource, setMarkdownSource] = useState("");
 
@@ -38,7 +40,9 @@ export default function Editor() {
               <HistoryPlugin />
               <ListPlugin />
               <AutoFocusPlugin />
-              <BlockquoteBehaviorPlugin />
+              <BlockquoteBehaviorPlugin
+                exitOnEmptyLine={exitBlockquoteOnEmptyLine}
+              />
               <MarkdownShortcutPlugin transformers={markdownTransformers} />
               <MarkdownPreviewPlugin onMarkdown={setMarkdownSource} />
             </div>
@@ -51,15 +55,26 @@ export default function Editor() {
           </pre>
         </div>
       </div>
-      <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer select-none">
-        <input
-          type="checkbox"
-          checked={showMarkup}
-          onChange={(e) => setShowMarkup(e.target.checked)}
-          className="cursor-pointer"
-        />
-        Show markup
-      </label>
+      <div className="flex flex-wrap gap-4">
+        <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer select-none">
+          <input
+            type="checkbox"
+            checked={showMarkup}
+            onChange={(e) => setShowMarkup(e.target.checked)}
+            className="cursor-pointer"
+          />
+          Show markup
+        </label>
+        <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer select-none">
+          <input
+            type="checkbox"
+            checked={exitBlockquoteOnEmptyLine}
+            onChange={(e) => setExitBlockquoteOnEmptyLine(e.target.checked)}
+            className="cursor-pointer"
+          />
+          Exit blockquote on empty line
+        </label>
+      </div>
     </div>
   );
 }
