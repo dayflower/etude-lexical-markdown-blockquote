@@ -1,0 +1,38 @@
+{
+  "name": "etude-lexical-markdown-blockquote",
+  "description": "Etude for Lexical rich text editor with markdown blockquote support",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dayflower/etude-lexical-markdown-blockquote.git"
+  },
+  "author": "dayflower (https://github.com/dayflower)",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite --no-clear-screen",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "check": "biome check",
+    "fix": "biome check --write"
+  },
+  "dependencies": {
+    "@lexical/react": "^0.44.0",
+    "lexical": "^0.44.0",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.4.16",
+    "@tailwindcss/vite": "^4.3.0",
+    "@types/node": "^24.12.4",
+    "@types/react": "^19.2.15",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.2",
+    "globals": "^17.6.0",
+    "tailwindcss": "^4.3.0",
+    "typescript": "~6.0.3",
+    "vite": "^8.0.14"
+  }
+}
