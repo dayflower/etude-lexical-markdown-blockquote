@@ -7,6 +7,7 @@ import { ListPlugin } from "@lexical/react/LexicalListPlugin";
 import { MarkdownShortcutPlugin } from "@lexical/react/LexicalMarkdownShortcutPlugin";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { useState } from "react";
+import BlockquoteBehaviorPlugin from "./BlockquoteBehaviorPlugin";
 import { initialConfig, markdownTransformers } from "./editorConfig";
 import MarkdownPreviewPlugin from "./MarkdownPreviewPlugin";
 
@@ -37,6 +38,7 @@ export default function Editor() {
               <HistoryPlugin />
               <ListPlugin />
               <AutoFocusPlugin />
+              <BlockquoteBehaviorPlugin />
               <MarkdownShortcutPlugin transformers={markdownTransformers} />
               <MarkdownPreviewPlugin onMarkdown={setMarkdownSource} />
             </div>
