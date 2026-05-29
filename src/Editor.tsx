@@ -6,6 +6,7 @@ import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 import { ListPlugin } from "@lexical/react/LexicalListPlugin";
 import { MarkdownShortcutPlugin } from "@lexical/react/LexicalMarkdownShortcutPlugin";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
+import { TabIndentationPlugin } from "@lexical/react/LexicalTabIndentationPlugin";
 import { useState } from "react";
 import BlockquoteBehaviorPlugin from "./BlockquoteBehaviorPlugin";
 import { initialConfig, markdownTransformers } from "./editorConfig";
@@ -39,6 +40,7 @@ export default function Editor() {
               />
               <HistoryPlugin />
               <ListPlugin />
+              <TabIndentationPlugin />
               <AutoFocusPlugin />
               <BlockquoteBehaviorPlugin
                 exitOnEmptyLine={exitBlockquoteOnEmptyLine}
