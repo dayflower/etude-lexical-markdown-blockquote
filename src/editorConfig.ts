@@ -12,6 +12,7 @@ import {
   type Transformer,
   UNORDERED_LIST,
 } from "@lexical/markdown";
+import type { InitialConfigType } from "@lexical/react/LexicalComposer";
 import { HeadingNode, QuoteNode } from "@lexical/rich-text";
 
 export const markdownTransformers: Transformer[] = [
@@ -59,7 +60,7 @@ function onError(error: Error) {
   console.error(error);
 }
 
-export const initialConfig = {
+export const initialConfig: InitialConfigType = {
   namespace: "LexicalMarkdownBlockquote",
   theme,
   onError,
