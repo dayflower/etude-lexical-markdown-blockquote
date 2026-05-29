@@ -45,7 +45,7 @@ const theme = {
     ul: "list-disc mb-2",
   },
   paragraph: "mb-2",
-  quote: "border-l-4 border-gray-300 pl-4 my-2 text-gray-700",
+  quote: "relative border-l-4 border-gray-300 pl-4 my-2 text-gray-700",
   link: "text-blue-600 underline hover:text-blue-800 cursor-pointer",
   text: {
     bold: "font-bold",

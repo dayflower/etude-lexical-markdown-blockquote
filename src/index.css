@@ -1,1 +1,17 @@
 @import "tailwindcss";
+
+.show-brackets blockquote {
+  border-left-color: var(--color-gray-300);
+}
+
+.show-brackets blockquote::before {
+  content: ">";
+  position: absolute;
+  top: 0;
+  left: -0.4rem;
+  color: #64748b;
+  font-family: var(--font-mono);
+  line-height: 1.5rem;
+  pointer-events: none;
+  user-select: none;
+}
