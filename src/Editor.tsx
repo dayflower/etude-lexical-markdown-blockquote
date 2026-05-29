@@ -10,6 +10,7 @@ import { TabIndentationPlugin } from "@lexical/react/LexicalTabIndentationPlugin
 import { useState } from "react";
 import BlockquoteBehaviorPlugin from "./BlockquoteBehaviorPlugin";
 import { initialConfig, markdownTransformers } from "./editorConfig";
+import ListBehaviorPlugin from "./ListBehaviorPlugin";
 import MarkdownPreviewPlugin from "./MarkdownPreviewPlugin";
 
 export default function Editor() {
@@ -40,6 +41,7 @@ export default function Editor() {
               />
               <HistoryPlugin />
               <ListPlugin />
+              <ListBehaviorPlugin />
               <TabIndentationPlugin />
               <AutoFocusPlugin />
               <BlockquoteBehaviorPlugin
