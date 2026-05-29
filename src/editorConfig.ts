@@ -7,17 +7,19 @@ import {
   ITALIC_STAR,
   ITALIC_UNDERSCORE,
   ORDERED_LIST,
-  QUOTE,
   STRIKETHROUGH,
   type Transformer,
   UNORDERED_LIST,
 } from "@lexical/markdown";
 import type { InitialConfigType } from "@lexical/react/LexicalComposer";
 import { HeadingNode, QuoteNode } from "@lexical/rich-text";
+import { createBlockquoteTransformer } from "./blockquoteMarkdown";
+
+const BLOCKQUOTE = createBlockquoteTransformer();
 
 export const markdownTransformers: Transformer[] = [
   HEADING,
-  QUOTE,
+  BLOCKQUOTE,
   UNORDERED_LIST,
   ORDERED_LIST,
   INLINE_CODE,

@@ -6,7 +6,8 @@ import {
 import {
   $createParagraphNode,
   $getSelection,
-  $isLineBreakNode,
+  $isElementNode,
+  $isParagraphNode,
   $isRangeSelection,
   type ElementNode,
   type LexicalNode,
@@ -27,15 +28,15 @@ function getCollapsedQuoteSelection(): QuoteSelectionContext | null {
   }
 
   const anchorNode = selection.anchor.getNode();
-  const topLevelElement = anchorNode.getTopLevelElement();
+  const quoteNode = getNearestQuoteNode(anchorNode);
 
-  if (!$isQuoteNode(topLevelElement)) {
+  if (quoteNode === null) {
     return null;
   }
 
   return {
     anchorNode,
-    quoteNode: topLevelElement,
+    quoteNode,
     selection,
   };
 }
@@ -73,6 +74,20 @@ function isSelectionAtQuoteStart(
   return anchorNode.is(quoteNode.getFirstDescendant());
 }
 
+function getNearestQuoteNode(node: LexicalNode): QuoteNode | null {
+  let currentNode: LexicalNode | null = node;
+
+  while (currentNode !== null) {
+    if ($isQuoteNode(currentNode)) {
+      return currentNode;
+    }
+
+    currentNode = currentNode.getParent();
+  }
+
+  return null;
+}
+
 function replaceQuoteWithParagraph(quoteNode: QuoteNode): ElementNode {
   const paragraph = $createParagraphNode();
   paragraph.setDirection(quoteNode.getDirection());
@@ -95,14 +110,12 @@ export function handleQuoteEnter(
     return false;
   }
 
-  event?.preventDefault();
-
   if (exitOnEmptyLine && exitQuoteAtBlankLine()) {
+    event?.preventDefault();
     return true;
   }
 
-  context.selection.insertLineBreak(false);
-  return true;
+  return false;
 }
 
 export function handleQuoteBackspace(): boolean {
@@ -120,7 +133,7 @@ export function handleQuoteBackspace(): boolean {
   const previousSibling = quoteNode.getPreviousSibling();
 
   if (!$isQuoteNode(previousSibling)) {
-    replaceQuoteWithParagraph(quoteNode);
+    unwrapQuote(quoteNode);
     return true;
   }
 
@@ -138,36 +151,36 @@ export function handleQuoteBackspace(): boolean {
 function exitQuoteAtBlankLine(): boolean {
   const selection = $getSelection();
 
+  if (!$isRangeSelection(selection) || !selection.isCollapsed()) {
+    return false;
+  }
+
+  const anchorNode = selection.anchor.getNode();
+  const quoteNode = getNearestQuoteNode(anchorNode);
+  const blockNode = getQuoteChildBlock(anchorNode, quoteNode);
+
   if (
-    !$isRangeSelection(selection) ||
-    !selection.isCollapsed() ||
-    selection.anchor.type !== "element"
+    quoteNode === null ||
+    blockNode === null ||
+    !$isParagraphNode(blockNode) ||
+    !blockNode.isEmpty()
   ) {
     return false;
   }
-
-  const quoteNode = selection.anchor.getNode();
-
-  if (!$isQuoteNode(quoteNode)) {
-    return false;
-  }
-
-  const previousChild = quoteNode.getChildAtIndex(selection.anchor.offset - 1);
-  const nextChild = quoteNode.getChildAtIndex(selection.anchor.offset);
-
-  if (
-    !$isLineBreakNode(previousChild) ||
-    (nextChild !== null && !$isLineBreakNode(nextChild))
-  ) {
-    return false;
-  }
-
-  previousChild.remove();
 
   const paragraph = $createParagraphNode();
   paragraph.setDirection(quoteNode.getDirection());
-  quoteNode.insertAfter(paragraph);
-  moveTrailingQuoteContentAfterParagraph(quoteNode, paragraph, nextChild);
+
+  const trailingBlocks = blockNode.getNextSiblings();
+  blockNode.remove();
+
+  if (quoteNode.isEmpty()) {
+    quoteNode.replace(paragraph);
+  } else {
+    quoteNode.insertAfter(paragraph);
+  }
+
+  moveTrailingQuoteContentAfterParagraph(quoteNode, paragraph, trailingBlocks);
 
   paragraph.selectStart();
   return true;
@@ -176,16 +189,10 @@ function exitQuoteAtBlankLine(): boolean {
 function moveTrailingQuoteContentAfterParagraph(
   sourceQuoteNode: QuoteNode,
   paragraph: ElementNode,
-  nextChild: LexicalNode | null,
+  trailingChildren: LexicalNode[],
 ) {
-  if (!$isLineBreakNode(nextChild)) {
-    return;
-  }
-
-  const trailingChildren = nextChild.getNextSiblings();
   const trailingQuoteNode = $createQuoteNode();
   trailingQuoteNode.setDirection(sourceQuoteNode.getDirection());
-  nextChild.remove();
 
   if (trailingChildren.length === 0) {
     return;
@@ -193,4 +200,44 @@ function moveTrailingQuoteContentAfterParagraph(
 
   trailingQuoteNode.append(...trailingChildren);
   paragraph.insertAfter(trailingQuoteNode);
+}
+
+function getQuoteChildBlock(
+  node: LexicalNode,
+  quoteNode: QuoteNode | null,
+): ElementNode | null {
+  if (quoteNode === null) {
+    return null;
+  }
+
+  let currentNode: LexicalNode | null = node;
+
+  while (currentNode !== null && !currentNode.getParent()?.is(quoteNode)) {
+    currentNode = currentNode.getParent();
+  }
+
+  return $isElementNode(currentNode) ? currentNode : null;
+}
+
+function unwrapQuote(quoteNode: QuoteNode) {
+  const children = quoteNode.getChildren();
+
+  if (children.length === 0) {
+    replaceQuoteWithParagraph(quoteNode);
+    return;
+  }
+
+  const firstChild = children[0];
+  quoteNode.replace(firstChild);
+
+  let previousChild = firstChild;
+
+  for (const child of children.slice(1)) {
+    previousChild.insertAfter(child);
+    previousChild = child;
+  }
+
+  if ($isElementNode(firstChild)) {
+    firstChild.selectStart();
+  }
 }
