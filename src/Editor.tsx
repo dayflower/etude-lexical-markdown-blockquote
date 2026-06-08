@@ -10,6 +10,7 @@ import { TabIndentationPlugin } from "@lexical/react/LexicalTabIndentationPlugin
 import { useState } from "react";
 import BlockquoteBehaviorPlugin from "./BlockquoteBehaviorPlugin";
 import { initialConfig, markdownTransformers } from "./editorConfig";
+import HtmlPreviewPlugin from "./HtmlPreviewPlugin";
 import ListBehaviorPlugin from "./ListBehaviorPlugin";
 import MarkdownPreviewPlugin from "./MarkdownPreviewPlugin";
 
@@ -18,6 +19,7 @@ export default function Editor() {
     useState(false);
   const [showMarkup, setShowMarkup] = useState(false);
   const [markdownSource, setMarkdownSource] = useState("");
+  const [htmlOutput, setHtmlOutput] = useState("");
 
   return (
     <div className="space-y-2">
@@ -49,6 +51,7 @@ export default function Editor() {
               />
               <MarkdownShortcutPlugin transformers={markdownTransformers} />
               <MarkdownPreviewPlugin onMarkdown={setMarkdownSource} />
+              <HtmlPreviewPlugin onHtml={setHtmlOutput} />
             </div>
           </LexicalComposer>
         </div>
@@ -58,6 +61,14 @@ export default function Editor() {
             {markdownSource}
           </pre>
         </div>
+      </div>
+      <div>
+        <p className="text-sm text-gray-500 mb-1">
+          HTML output (via $generateHtmlFromNodes)
+        </p>
+        <pre className="border border-gray-300 rounded-lg p-4 bg-gray-50 font-mono text-sm whitespace-pre-wrap overflow-auto">
+          {htmlOutput}
+        </pre>
       </div>
       <div className="flex flex-wrap gap-4">
         <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer select-none">
